@@ -153,7 +153,7 @@ void ScatterChartItem::updateGeometry()
         return;
     }
 
-    const QVector<QPointF>& points = geometryPoints();
+    const QList<QPointF> &points = geometryPoints();
 
     if (points.size() == 0) {
         deletePoints(m_items.childItems().count());
@@ -178,7 +178,7 @@ void ScatterChartItem::updateGeometry()
     // a region that has to be compatible with QRect.
     if (clipRect.height() <= INT_MAX
             && clipRect.width() <= INT_MAX) {
-        QVector<bool> offGridStatus = offGridStatusVector();
+        const QList<bool> offGridStatus = offGridStatusVector();
         const int seriesLastIndex = m_series->count() - 1;
 
         for (int i = 0; i < points.size(); i++) {
@@ -211,8 +211,8 @@ void ScatterChartItem::updateGeometry()
 
 void ScatterChartItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
     if (m_series->useOpenGL())
         return;

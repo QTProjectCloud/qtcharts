@@ -120,7 +120,7 @@ void AbstractBarChartItem::initializeFullLayout()
     }
 }
 
-void AbstractBarChartItem::applyLayout(const QVector<QRectF> &layout)
+void AbstractBarChartItem::applyLayout(const QList<QRectF> &layout)
 {
     QSizeF size = geometry().size();
     if (geometry().size().isValid()) {
@@ -152,7 +152,7 @@ void AbstractBarChartItem::setAnimation(BarAnimation *animation)
     m_resetAnimation = true;
 }
 
-void AbstractBarChartItem::setLayout(const QVector<QRectF> &layout)
+void AbstractBarChartItem::setLayout(const QList<QRectF> &layout)
 {
     int setCount = m_series->count();
     if (layout.size() != m_layout.size() || m_barMap.size() != setCount)
@@ -199,7 +199,7 @@ void AbstractBarChartItem::handleLayoutChanged()
     if ((m_rect.width() <= 0) || (m_rect.height() <= 0))
         return; // rect size zero.
     updateBarItems();
-    QVector<QRectF> layout = calculateLayout();
+    QList<QRectF> layout = calculateLayout();
     handleUpdatedBars();
     applyLayout(layout);
 }
@@ -352,14 +352,16 @@ void AbstractBarChartItem::positionLabels()
             case QAbstractBarSeries::LabelsCenter:
                 xPos = m_layout.at(bar->layoutIndex()).center().x() - center.x();
                 break;
+            case QAbstractBarSeries::LabelsOutsideEnd:
+                xPos = m_layout.at(bar->layoutIndex()).right() + offset + xDiff;
+                if (xPos + labelRect.width() - offset <= m_rect.right())
+                    break;
+                Q_FALLTHROUGH();
             case QAbstractBarSeries::LabelsInsideEnd:
                 xPos = m_layout.at(bar->layoutIndex()).right() - labelRect.width() - offset + xDiff;
                 break;
             case QAbstractBarSeries::LabelsInsideBase:
                 xPos = m_layout.at(bar->layoutIndex()).left() + offset + xDiff;
-                break;
-            case QAbstractBarSeries::LabelsOutsideEnd:
-                xPos = m_layout.at(bar->layoutIndex()).right() + offset + xDiff;
                 break;
             default:
                 // Invalid position, never comes here
@@ -380,7 +382,7 @@ void AbstractBarChartItem::handleBarValueChange(int index, QtCharts::QBarSet *ba
 
 void AbstractBarChartItem::handleBarValueAdd(int index, int count, QBarSet *barset)
 {
-    Q_UNUSED(count)
+    Q_UNUSED(count);
 
     // Value insertions into middle of barset need to dirty the rest of the labels of the set
     markLabelsDirty(barset, index, -1);
@@ -389,7 +391,7 @@ void AbstractBarChartItem::handleBarValueAdd(int index, int count, QBarSet *bars
 
 void AbstractBarChartItem::handleBarValueRemove(int index, int count, QBarSet *barset)
 {
-    Q_UNUSED(count)
+    Q_UNUSED(count);
 
     // Value removals from the middle of barset need to dirty the rest of the labels of the set.
     markLabelsDirty(barset, index, -1);
@@ -407,7 +409,7 @@ void AbstractBarChartItem::handleBarValueRemove(int index, int count, QBarSet *b
 
 void AbstractBarChartItem::handleSeriesAdded(QAbstractSeries *series)
 {
-    Q_UNUSED(series)
+    Q_UNUSED(series);
 
     // If the parent series was added, do nothing, as series pos and width calculations will
     // happen anyway.
@@ -473,14 +475,16 @@ void AbstractBarChartItem::positionLabelsVertical()
             case QAbstractBarSeries::LabelsCenter:
                 yPos = m_layout.at(bar->layoutIndex()).center().y() - center.y();
                 break;
+            case QAbstractBarSeries::LabelsOutsideEnd:
+                yPos = m_layout.at(bar->layoutIndex()).top() - labelRect.height() - offset + yDiff;
+                if (yPos + offset >= m_rect.y())
+                    break;
+                Q_FALLTHROUGH();
             case QAbstractBarSeries::LabelsInsideEnd:
                 yPos = m_layout.at(bar->layoutIndex()).top() + offset + yDiff;
                 break;
             case QAbstractBarSeries::LabelsInsideBase:
                 yPos = m_layout.at(bar->layoutIndex()).bottom() - labelRect.height() - offset + yDiff;
-                break;
-            case QAbstractBarSeries::LabelsOutsideEnd:
-                yPos = m_layout.at(bar->layoutIndex()).top() - labelRect.height() - offset + yDiff;
                 break;
             default:
                 // Invalid position, never comes here
@@ -593,7 +597,7 @@ void AbstractBarChartItem::updateBarItems()
 
     int layoutSize = m_categoryCount * newSets.size();
 
-    QVector<QRectF> oldLayout = m_layout;
+    QList<QRectF> oldLayout = m_layout;
     if (layoutSize != m_layout.size())
         m_layout.resize(layoutSize);
 
@@ -624,7 +628,7 @@ void AbstractBarChartItem::updateBarItems()
         }
         // Update bar indexes
         QHash<int, Bar*> indexMap;
-        QVector<Bar *> unassignedBars(m_categoryCount, nullptr);
+        QList<Bar *> unassignedBars(m_categoryCount, nullptr);
         int unassignedIndex(0);
         QList<Bar *> newBars;
         newBars.reserve(m_categoryCount);

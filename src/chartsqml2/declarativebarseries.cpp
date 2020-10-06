@@ -44,8 +44,8 @@ DeclarativeBarSet::DeclarativeBarSet(QObject *parent)
 
 void DeclarativeBarSet::handleCountChanged(int index, int count)
 {
-    Q_UNUSED(index)
-    Q_UNUSED(count)
+    Q_UNUSED(index);
+    Q_UNUSED(count);
     emit countChanged(QBarSet::count());
 }
 
@@ -87,7 +87,7 @@ void DeclarativeBarSet::setValues(QVariantList values)
             }
         }
 
-        QVector<qreal> indexValueList;
+        QList<qreal> indexValueList;
         indexValueList.resize(maxValue + 1);
 
         for (int i = 0; i < values.count(); i++) {

@@ -70,13 +70,19 @@ public:
     virtual bool isEmpty() = 0;
 
     void setAnimation(AxisAnimation *animation) { m_animation = animation; }
-    AxisAnimation *animation() const { return m_animation; }
+    AxisAnimation *animation() const override { return m_animation; }
 
     QAbstractAxis *axis() const { return m_axis; }
-    void setLayout(QVector<qreal> &layout) { m_layout = layout; }
-    QVector<qreal> &layout() { return m_layout; } // Modifiable reference
-    void setDynamicMinorTickLayout(const QVector<qreal> &layout) { m_dynamicMinorTickLayout = layout; }
-    QVector<qreal> &dynamicMinorTicklayout() { return m_dynamicMinorTickLayout; } // Modifiable reference
+    void setLayout(const QList<qreal> &layout) { m_layout = layout; }
+    QList<qreal> &layout() { return m_layout; } // Modifiable reference
+    void setDynamicMinorTickLayout(const QList<qreal> &layout)
+    {
+        m_dynamicMinorTickLayout = layout;
+    }
+    QList<qreal> &dynamicMinorTicklayout()
+    {
+        return m_dynamicMinorTickLayout;
+    } // Modifiable reference
     inline qreal labelPadding() const { return qreal(4.0); }
     inline qreal titlePadding() const { return qreal(2.0); }
     void setLabels(const QStringList &labels) { m_labelsList = labels; }
@@ -104,13 +110,13 @@ public:
     QStringList createDateTimeLabels(qreal max, qreal min, int ticks, const QString &format) const;
 
     // from QGraphicsLayoutItem
-    QRectF boundingRect() const
+    QRectF boundingRect() const override
     {
         return QRectF();
     }
 
     // from QGraphicsLayoutItem
-    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override
     {
     }
 
@@ -118,8 +124,8 @@ public:
     void setLabelsEditable(bool labelsEditable);
 
 protected:
-    virtual QVector<qreal> calculateLayout() const = 0;
-    virtual void updateLayout(QVector<qreal> &layout) = 0;
+    virtual QList<qreal> calculateLayout() const = 0;
+    virtual void updateLayout(const QList<qreal> &layout) = 0;
 
     QList<QGraphicsItem *> gridItems() { return m_grid->childItems(); }
     QList<QGraphicsItem *> minorGridItems() { return m_minorGrid->childItems(); }
@@ -175,8 +181,8 @@ private:
 
     QAbstractAxis *m_axis;
     AxisAnimation *m_animation;
-    QVector<qreal> m_layout;
-    QVector<qreal> m_dynamicMinorTickLayout;
+    QList<qreal> m_layout;
+    QList<qreal> m_dynamicMinorTickLayout;
     QStringList m_labelsList;
     QRectF m_axisRect;
     QScopedPointer<QGraphicsItemGroup> m_grid;

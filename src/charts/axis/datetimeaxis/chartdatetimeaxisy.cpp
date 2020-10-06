@@ -49,13 +49,13 @@ ChartDateTimeAxisY::~ChartDateTimeAxisY()
 {
 }
 
-QVector<qreal> ChartDateTimeAxisY::calculateLayout() const
+QList<qreal> ChartDateTimeAxisY::calculateLayout() const
 {
-    int tickCount = m_axis->tickCount();
+    const int tickCount = m_axis->tickCount();
 
     Q_ASSERT(tickCount >= 2);
 
-    QVector<qreal> points;
+    QList<qreal> points;
     points.resize(tickCount);
     const QRectF &gridRect = gridGeometry();
     const qreal deltaY = gridRect.height() / (qreal(tickCount) - 1.0);
@@ -67,7 +67,7 @@ QVector<qreal> ChartDateTimeAxisY::calculateLayout() const
 
 void ChartDateTimeAxisY::updateGeometry()
 {
-    const QVector<qreal> &layout = ChartAxisElement::layout();
+    const QList<qreal> &layout = ChartAxisElement::layout();
     if (layout.isEmpty())
         return;
     setLabels(createDateTimeLabels(min(), max(), layout.size(), m_axis->format()));
@@ -77,7 +77,7 @@ void ChartDateTimeAxisY::updateGeometry()
 
 void ChartDateTimeAxisY::handleTickCountChanged(int tick)
 {
-    Q_UNUSED(tick)
+    Q_UNUSED(tick);
     QGraphicsLayoutItem::updateGeometry();
     if (presenter())
         presenter()->layout()->invalidate();
@@ -93,7 +93,7 @@ void ChartDateTimeAxisY::handleFormatChanged(const QString &format)
 
 QSizeF ChartDateTimeAxisY::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    Q_UNUSED(constraint)
+    Q_UNUSED(constraint);
 
     QSizeF sh;
 

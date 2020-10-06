@@ -41,7 +41,7 @@ HorizontalPercentBarChartItem::HorizontalPercentBarChartItem(QAbstractBarSeries 
 
 QString HorizontalPercentBarChartItem::generateLabelText(int set, int category, qreal value)
 {
-    Q_UNUSED(value)
+    Q_UNUSED(value);
 
     static const QString valueTag(QLatin1String("@value"));
     qreal p = m_series->d_func()->percentageAt(set, category) * 100.0;
@@ -61,8 +61,8 @@ QString HorizontalPercentBarChartItem::generateLabelText(int set, int category, 
 void HorizontalPercentBarChartItem::initializeLayout(int set, int category,
                                                      int layoutIndex, bool resetAnimation)
 {
-    Q_UNUSED(set)
-    Q_UNUSED(resetAnimation)
+    Q_UNUSED(set);
+    Q_UNUSED(resetAnimation);
 
     QRectF rect;
 
@@ -93,7 +93,7 @@ void HorizontalPercentBarChartItem::initializeLayout(int set, int category,
 
 void HorizontalPercentBarChartItem::markLabelsDirty(QBarSet *barset, int index, int count)
 {
-    Q_UNUSED(barset)
+    Q_UNUSED(barset);
     // Percent series need to dirty all labels of the stack
     QList<QBarSet *> sets = m_barMap.keys();
     for (int set = 0; set < sets.size(); set++)
@@ -112,16 +112,16 @@ QPointF HorizontalPercentBarChartItem::bottomRightPoint(int category, qreal barW
                 QPointF(value, m_seriesPosAdjustment + category + (barWidth / 2.0)), m_validData);
 }
 
-QVector<QRectF> HorizontalPercentBarChartItem::calculateLayout()
+QList<QRectF> HorizontalPercentBarChartItem::calculateLayout()
 {
-    QVector<QRectF> layout;
+    QList<QRectF> layout;
     layout.resize(m_layout.size());
 
     const int setCount = m_series->count();
     const qreal barWidth = m_series->d_func()->barWidth() * m_seriesWidth;
 
-    QVector<qreal> categorySums(m_categoryCount);
-    QVector<qreal> tempSums(m_categoryCount, 0.0);
+    QList<qreal> categorySums(m_categoryCount);
+    QList<qreal> tempSums(m_categoryCount, 0.0);
 
     for (int category = 0; category < m_categoryCount; category++)
         categorySums[category] = m_series->d_func()->categorySum(category + m_firstCategory);

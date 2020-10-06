@@ -86,8 +86,8 @@ public:
     Q_INVOKABLE void clear();
 
 public:
-    void classBegin();
-    void componentComplete();
+    void classBegin() override;
+    void componentComplete() override;
 
 Q_SIGNALS:
     void sliceAdded(QPieSlice *slice);
@@ -95,8 +95,8 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     static void appendSeriesChildren(QQmlListProperty<QObject> *list, QObject *element);
-    void handleAdded(QList<QPieSlice *> slices);
-    void handleRemoved(QList<QPieSlice *> slices);
+    void handleAdded(const QList<QPieSlice *> &slices);
+    void handleRemoved(const QList<QPieSlice *> &slices);
 };
 
 QT_CHARTS_END_NAMESPACE

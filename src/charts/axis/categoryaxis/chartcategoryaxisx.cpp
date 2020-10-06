@@ -48,10 +48,10 @@ ChartCategoryAxisX::~ChartCategoryAxisX()
 {
 }
 
-QVector<qreal> ChartCategoryAxisX::calculateLayout() const
+QList<qreal> ChartCategoryAxisX::calculateLayout() const
 {
     int tickCount = m_axis->categoriesLabels().count() + 1;
-    QVector<qreal> points;
+    QList<qreal> points;
 
     if (tickCount < 2)
         return points;
@@ -83,7 +83,7 @@ void ChartCategoryAxisX::updateGeometry()
 
 QSizeF ChartCategoryAxisX::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    Q_UNUSED(constraint)
+    Q_UNUSED(constraint);
 
     QSizeF sh;
     QSizeF base = HorizontalAxis::sizeHint(which, constraint);

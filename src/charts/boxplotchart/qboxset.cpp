@@ -323,14 +323,14 @@ bool QBoxSetPrivate::append(qreal value)
     return false;
 }
 
-bool QBoxSetPrivate::append(QList<qreal> values)
+bool QBoxSetPrivate::append(const QList<qreal> &values)
 {
     bool success = false;
 
-    for (int i = 0; i < values.count(); i++) {
-        if (isValidValue(values.at(i)) && m_appendCount < m_valuesCount) {
+    for (const qreal value : values) {
+        if (isValidValue(value) && m_appendCount < m_valuesCount) {
             success = true;
-            m_values[m_appendCount++] = values.at(i);
+            m_values[m_appendCount++] = value;
         }
     }
 
@@ -343,8 +343,9 @@ bool QBoxSetPrivate::append(QList<qreal> values)
 void QBoxSetPrivate::clear()
 {
     m_appendCount = 0;
-    for (int i = 0; i < m_valuesCount; i++)
+    for (int i = 0; i < m_valuesCount; i++) {
          m_values[i] = 0.0;
+    }
     emit restructuredBox();
 }
 

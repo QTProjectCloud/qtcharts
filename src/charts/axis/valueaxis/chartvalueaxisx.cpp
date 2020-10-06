@@ -58,14 +58,14 @@ ChartValueAxisX::~ChartValueAxisX()
 {
 }
 
-QVector<qreal> ChartValueAxisX::calculateLayout() const
+QList<qreal> ChartValueAxisX::calculateLayout() const
 {
     if (m_axis->tickType() == QValueAxis::TicksFixed) {
         int tickCount = m_axis->tickCount();
 
         Q_ASSERT(tickCount >= 2);
 
-        QVector<qreal> points;
+        QList<qreal> points;
         points.resize(tickCount);
 
         const QRectF &gridRect = gridGeometry();
@@ -88,7 +88,7 @@ QVector<qreal> ChartValueAxisX::calculateLayout() const
         const QRectF &gridRect = gridGeometry();
         const qreal deltaX = gridRect.width() / (maxValue - minValue);
 
-        QVector<qreal> points;
+        QList<qreal> points;
         const qreal leftPos = gridRect.left();
         while (value <= maxValue || qFuzzyCompare(value, maxValue)) {
             points << (value - minValue) * deltaX + leftPos;
@@ -101,8 +101,8 @@ QVector<qreal> ChartValueAxisX::calculateLayout() const
 
 void ChartValueAxisX::updateGeometry()
 {
-    const QVector<qreal>& layout = ChartAxisElement::layout();
-    const QVector<qreal>& dynamicMinorTicklayout = ChartAxisElement::dynamicMinorTicklayout();
+    const QList<qreal> &layout = ChartAxisElement::layout();
+    const QList<qreal> &dynamicMinorTicklayout = ChartAxisElement::dynamicMinorTicklayout();
     if (layout.isEmpty() && dynamicMinorTicklayout.isEmpty())
         return;
     setLabels(createValueLabels(min(), max(), layout.size(), m_axis->tickInterval(),
@@ -135,28 +135,28 @@ void ChartValueAxisX::handleLabelFormatChanged(const QString &format)
 
 void ChartValueAxisX::handleTickIntervalChanged(qreal interval)
 {
-    Q_UNUSED(interval)
+    Q_UNUSED(interval);
     QGraphicsLayoutItem::updateGeometry();
     if (presenter()) presenter()->layout()->invalidate();
 }
 
 void ChartValueAxisX::handleTickAnchorChanged(qreal anchor)
 {
-    Q_UNUSED(anchor)
+    Q_UNUSED(anchor);
     QGraphicsLayoutItem::updateGeometry();
     if (presenter()) presenter()->layout()->invalidate();
 }
 
 void ChartValueAxisX::handleTickTypeChanged(QValueAxis::TickType type)
 {
-    Q_UNUSED(type)
+    Q_UNUSED(type);
     QGraphicsLayoutItem::updateGeometry();
     if (presenter()) presenter()->layout()->invalidate();
 }
 
 QSizeF ChartValueAxisX::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    Q_UNUSED(constraint)
+    Q_UNUSED(constraint);
 
     QSizeF sh;
 

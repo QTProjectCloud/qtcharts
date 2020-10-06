@@ -92,7 +92,7 @@ void LineChartItem::updateGeometry()
     // Store the points to a local variable so that the old line gets properly cleared
     // when animation starts.
     m_linePoints = geometryPoints();
-    const QVector<QPointF> &points = m_linePoints;
+    const QList<QPointF> &points = m_linePoints;
 
     if (points.size() == 0) {
         prepareGeometryChange();
@@ -359,8 +359,8 @@ void LineChartItem::handleUpdated()
 
 void LineChartItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(widget)
-    Q_UNUSED(option)
+    Q_UNUSED(widget);
+    Q_UNUSED(option);
 
     if (m_series->useOpenGL())
         return;
