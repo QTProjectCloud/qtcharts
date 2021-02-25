@@ -42,7 +42,7 @@
 #  include <QElapsedTimer>
 #endif
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // This node draws the xy series data on a transparent background using OpenGL.
 // It is used as a child node of the chart node.
@@ -193,7 +193,7 @@ void DeclarativeOpenGLRenderNode::recreateFBO()
 
     delete m_texture;
     uint textureId = m_resolvedFbo ? m_resolvedFbo->texture() : m_fbo->texture();
-    m_texture = QPlatformInterface::QSGOpenGLTexture::fromNative(textureId, m_window, m_textureSize, m_textureOptions);
+    m_texture = QNativeInterface::QSGOpenGLTexture::fromNative(textureId, m_window, m_textureSize, m_textureOptions);
 
     if (!m_imageNode) {
         m_imageNode = m_window->createImageNode();
@@ -231,7 +231,8 @@ void DeclarativeOpenGLRenderNode::setSeriesData(bool mapDirty, const GLXYDataMap
             GLXYSeriesData *data = oldMap.take(i.key());
             const GLXYSeriesData *newData = i.value();
             if (!data || newData->dirty) {
-                data = new GLXYSeriesData;
+                if (!data)
+                    data = new GLXYSeriesData;
                 *data = *newData;
             }
             m_xyDataMap.insert(i.key(), data);
@@ -528,4 +529,4 @@ const QXYSeries *DeclarativeOpenGLRenderNode::findSeriesAtEvent(QMouseEvent *eve
     return series;
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE

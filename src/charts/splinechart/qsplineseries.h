@@ -29,14 +29,13 @@
 
 #ifndef QSPLINESERIES_H
 #define QSPLINESERIES_H
-
 #include <QtCharts/QChartGlobal>
+#if QT_CONFIG(charts_spline_chart)
 #include <QtCharts/qlineseries.h>
 #include <QtCore/QList>
 #include <QtCore/QPointF>
-#include <QtCore/QtGlobal>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QSplineSeriesPrivate;
 
@@ -55,6 +54,8 @@ private:
     friend class SplineChartItem;
 };
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
+#endif // QT_CONFIG(charts_spline_chart)
 #endif // QSPLINESERIES_H
+

@@ -33,7 +33,7 @@
 #include <QtCharts/QHBoxPlotModelMapper>
 #include <QtCharts/QVBoxPlotModelMapper>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype BoxSet
@@ -343,7 +343,7 @@ QVariantList DeclarativeBoxSet::values()
 void DeclarativeBoxSet::setValues(QVariantList values)
 {
     for (int i(0); i < values.count(); i++) {
-        if (values.at(i).canConvert(QVariant::Double))
+        if (values.at(i).canConvert<double>())
             QBoxSet::append(values[i].toDouble());
     }
 }
@@ -496,6 +496,6 @@ void DeclarativeBoxPlotSeries::handleBrushChanged()
     }
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_declarativeboxplotseries_p.cpp"

@@ -32,7 +32,7 @@
 #include <QtCharts/QVBarModelMapper>
 #include <QtCharts/QHBarModelMapper>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 DeclarativeBarSet::DeclarativeBarSet(QObject *parent)
     : QBarSet("", parent)
@@ -77,11 +77,11 @@ void DeclarativeBarSet::setValues(QVariantList values)
     while (count())
         remove(count() - 1);
 
-    if (values.count() > 0 && values.at(0).canConvert(QVariant::Point)) {
+    if (values.count() > 0 && values.at(0).canConvert<QPoint>()) {
         // Create list of values for appending if the first item is Qt.point
         int maxValue = 0;
         for (int i = 0; i < values.count(); i++) {
-            if (values.at(i).canConvert(QVariant::Point) &&
+            if (values.at(i).canConvert<QPoint>() &&
                     values.at(i).toPoint().x() > maxValue) {
                 maxValue = values.at(i).toPoint().x();
             }
@@ -91,7 +91,7 @@ void DeclarativeBarSet::setValues(QVariantList values)
         indexValueList.resize(maxValue + 1);
 
         for (int i = 0; i < values.count(); i++) {
-            if (values.at(i).canConvert(QVariant::Point)) {
+            if (values.at(i).canConvert<QPoint>()) {
                 indexValueList.replace(values.at(i).toPoint().x(), values.at(i).toPointF().y());
             }
         }
@@ -101,7 +101,7 @@ void DeclarativeBarSet::setValues(QVariantList values)
 
     } else {
         for (int i(0); i < values.count(); i++) {
-            if (values.at(i).canConvert(QVariant::Double))
+            if (values.at(i).canConvert<double>())
                 QBarSet::append(values[i].toDouble());
         }
     }
@@ -513,6 +513,6 @@ DeclarativeBarSet *DeclarativeHorizontalPercentBarSeries::insert(int index, QStr
     return 0;
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_declarativebarseries_p.cpp"

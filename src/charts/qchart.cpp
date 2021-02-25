@@ -40,7 +40,7 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QGraphicsSceneResizeEvent>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
  \enum QChart::ChartTheme
@@ -414,6 +414,7 @@ void QChart::zoomIn(const QRectF &rect)
 
 /*!
  Zooms out of the view by a factor of two.
+ \note This will do nothing if the result would contain an invalid logarithmic axis range.
  */
 void QChart::zoomOut()
 {
@@ -964,6 +965,6 @@ void QChartPrivate::scroll(qreal dx, qreal dy)
     m_presenter->setState(ChartPresenter::ShowState,QPointF());
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_qchart.cpp"

@@ -1,3 +1,5 @@
+include($$OUT_PWD/../../src/charts/qtcharts-config.pri)
+QT_FOR_CONFIG += charts
 
 TARGET = qtchartsqml2
 CXX_MODULE = charts
@@ -5,7 +7,7 @@ DEFINES += QT_BUILD_QMLCHARTS_LIB
 
 QT += opengl qml quick
 QT += charts charts-private
-contains(QT_COORD_TYPE, float): DEFINES += QT_QREAL_IS_FLOAT
+QT_PRIVATE += core-private charts-private
 
 include($$PWD/designer/designer.pri)
 
@@ -14,46 +16,61 @@ SOURCES += \
     declarativechart.cpp \
     declarativexypoint.cpp \
     declarativexyseries.cpp \
-    declarativelineseries.cpp \
-    declarativesplineseries.cpp \
-    declarativeareaseries.cpp \
-    declarativescatterseries.cpp \
-    declarativepieseries.cpp \
-    declarativebarseries.cpp \
     declarativecategoryaxis.cpp \
     declarativemargins.cpp \
     declarativeaxes.cpp \
     declarativepolarchart.cpp \
-    declarativeboxplotseries.cpp \
-    declarativechartnode.cpp \
-    declarativecandlestickseries.cpp
+    declarativechartnode.cpp
 
-PRIVATE_HEADERS += \
+HEADERS += \
     declarativechart_p.h \
     declarativexypoint_p.h \
     declarativexyseries_p.h \
-    declarativelineseries_p.h \
-    declarativesplineseries_p.h \
-    declarativeareaseries_p.h \
-    declarativescatterseries_p.h \
-    declarativepieseries_p.h \
-    declarativebarseries_p.h \
     declarativecategoryaxis_p.h \
     declarativemargins_p.h \
     declarativeaxes_p.h \
     declarativepolarchart_p.h \
-    declarativeboxplotseries_p.h \
-    declarativecandlestickseries_p.h \
     declarativeabstractrendernode_p.h \
     declarativechartnode_p.h \
     declarativechartglobal_p.h
 
-contains(QT_CONFIG, opengl) {
+qtConfig(opengl) {
     SOURCES += declarativeopenglrendernode.cpp
-    PRIVATE_HEADERS += declarativeopenglrendernode_p.h
+    HEADERS += declarativeopenglrendernode_p.h
+}
+qtConfig(charts-line-chart) {
+    SOURCES += declarativelineseries.cpp
+    HEADERS += declarativelineseries_p.h
+}
+qtConfig(charts-spline-chart) {
+    SOURCES += declarativesplineseries.cpp
+    HEADERS += declarativesplineseries_p.h
+}
+qtConfig(charts-area-chart) {
+    SOURCES += declarativeareaseries.cpp
+    HEADERS += declarativeareaseries_p.h
+}
+qtConfig(charts-scatter-chart) {
+    SOURCES += declarativescatterseries.cpp
+    HEADERS += declarativescatterseries_p.h
+}
+qtConfig(charts-pie-chart) {
+    SOURCES += declarativepieseries.cpp
+    HEADERS += declarativepieseries_p.h
+}
+qtConfig(charts-bar-chart) {
+    SOURCES += declarativebarseries.cpp
+    HEADERS += declarativebarseries_p.h
+}
+qtConfig(charts-boxplot-chart) {
+    SOURCES += declarativeboxplotseries.cpp
+    HEADERS += declarativeboxplotseries_p.h
+}
+qtConfig(charts-candlestick-chart) {
+    SOURCES += declarativecandlestickseries.cpp
+    HEADERS += declarativecandlestickseries_p.h
 }
 
-HEADERS += $$PRIVATE_HEADERS
 INCLUDEPATH += $$PWD
 
 IMPORT_VERSION = 2.$$QT_MINOR_VERSION

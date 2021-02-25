@@ -33,7 +33,7 @@
 #include <QtCore/QtMath>
 #include <cmath>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 LogXYDomain::LogXYDomain(QObject *parent)
     : AbstractDomain(parent),
@@ -106,9 +106,9 @@ void LogXYDomain::zoomOut(const QRectF &rect)
     const qreal factorX = m_size.width() / fixedRect.width();
 
     qreal logLeftX = m_logLeftX + (m_logRightX - m_logLeftX) / 2 * (1 - factorX);
-    qreal logRIghtX = m_logLeftX + (m_logRightX - m_logLeftX) / 2 * (1 + factorX);
+    qreal logRightX = m_logLeftX + (m_logRightX - m_logLeftX) / 2 * (1 + factorX);
     qreal leftX = qPow(m_logBaseX, logLeftX);
-    qreal rightX = qPow(m_logBaseX, logRIghtX);
+    qreal rightX = qPow(m_logBaseX, logRightX);
     qreal minX = leftX < rightX ? leftX : rightX;
     qreal maxX = leftX > rightX ? leftX : rightX;
 
@@ -118,6 +118,12 @@ void LogXYDomain::zoomOut(const QRectF &rect)
 
     maxY = minY + dy * fixedRect.bottom();
     minY = maxY - dy * m_size.height();
+
+    if (logRightX > m_size.width())
+        return;
+
+    if (qIsInf(maxX))
+        return;
 
     setRange(minX, maxX, minY, maxY);
 }
@@ -267,6 +273,6 @@ QDebug Q_AUTOTEST_EXPORT operator<<(QDebug dbg, const LogXYDomain &domain)
     return dbg.maybeSpace();
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_logxydomain_p.cpp"

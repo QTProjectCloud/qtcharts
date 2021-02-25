@@ -33,7 +33,7 @@
 #include <QtCore/QtMath>
 #include <cmath>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 XLogYDomain::XLogYDomain(QObject *parent)
     : AbstractDomain(parent),
@@ -117,6 +117,12 @@ void XLogYDomain::zoomOut(const QRectF &rect)
     qreal rightY = qPow(m_logBaseY, newLogMaxY);
     qreal minY = leftY < rightY ? leftY : rightY;
     qreal maxY = leftY > rightY ? leftY : rightY;
+
+    if (newLogMaxY > m_size.height())
+        return;
+
+    if (qIsInf(maxY))
+        return;
 
     setRange(minX, maxX, minY, maxY);
 }
@@ -264,6 +270,6 @@ QDebug Q_AUTOTEST_EXPORT operator<<(QDebug dbg, const XLogYDomain &domain)
     return dbg.maybeSpace();
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_xlogydomain_p.cpp"

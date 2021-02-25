@@ -40,7 +40,7 @@
 #include <private/linearrowitem_p.h>
 #include <private/qabstractaxis_p.h>
 
-QT_CHARTS_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 CartesianChartAxis::CartesianChartAxis(QAbstractAxis *axis, QGraphicsItem *item , bool intervalAxis)
     : ChartAxisElement(axis, item, intervalAxis)
@@ -82,13 +82,14 @@ void CartesianChartAxis::createItems(int count)
         QGraphicsLineItem *arrow = new QGraphicsLineItem(this);
         QGraphicsLineItem *grid = new QGraphicsLineItem(this);
         QGraphicsTextItem *label;
-        if (axis()->type() == QtCharts::QAbstractAxis::AxisTypeValue) {
+        if (axis()->type() == QAbstractAxis::AxisTypeValue) {
             label = new ValueAxisLabel(this);
             connect(static_cast<ValueAxisLabel *>(label), &ValueAxisLabel::valueChanged,
                     this, &ChartAxisElement::valueLabelEdited);
             if (labelsEditable())
                 static_cast<ValueAxisLabel *>(label)->setEditable(true);
-        } else if (axis()->type() == QtCharts::QAbstractAxis::AxisTypeDateTime) {
+#if QT_CONFIG(charts_datetime_axis)
+        } else if (axis()->type() == QAbstractAxis::AxisTypeDateTime) {
             DateTimeAxisLabel *dateTimeLabel = new DateTimeAxisLabel(this);
             label = dateTimeLabel;
             connect(dateTimeLabel, &DateTimeAxisLabel::dateTimeChanged,
@@ -96,6 +97,7 @@ void CartesianChartAxis::createItems(int count)
             if (labelsEditable())
                 dateTimeLabel->setEditable(true);
             dateTimeLabel->setFormat(static_cast<QDateTimeAxis*>(axis())->format());
+#endif
         } else {
             label = new QGraphicsTextItem(this);
         }
@@ -296,9 +298,10 @@ void CartesianChartAxis::setDateTimeLabelsFormat(const QString &format)
             || axis()->type() != QAbstractAxis::AxisTypeDateTime) {
         return;
     }
-
+#if QT_CONFIG(charts_datetime_axis)
     for (int i = 0; i < layout().size(); i++)
         static_cast<DateTimeAxisLabel *>(labelItems().at(i))->setFormat(format);
+#endif
 }
 
 void CartesianChartAxis::handleArrowPenChanged(const QPen &pen)
@@ -390,14 +393,15 @@ void CartesianChartAxis::updateLabelsDateTimes()
 {
     if (max() <= min() || layout().size() < 1)
         return;
-
+#if QT_CONFIG(charts_datetime_axis)
     for (int i = 0; i < layout().size(); i++) {
         qreal value = min() + (i * (max() - min()) / (layout().size() - 1));
         static_cast<DateTimeAxisLabel *>(labelItems().at(i))->setValue(
                     QDateTime::fromMSecsSinceEpoch(value));
     }
+#endif
 }
 
-QT_CHARTS_END_NAMESPACE
+QT_END_NAMESPACE
 
 #include "moc_cartesianchartaxis_p.cpp"

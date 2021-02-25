@@ -1,9 +1,6 @@
-############################# BUILD CONFIG ######################################
-
 TARGET = QtCharts
-
 QT = core gui widgets opengl openglwidgets
-contains(QT_COORD_TYPE, float): DEFINES += QT_QREAL_IS_FLOAT
+QT_PRIVATE += core-private
 
 QMAKE_DOCS = $$PWD/doc/qtcharts.qdocconf
 
@@ -26,9 +23,9 @@ SOURCES += \
     $$PWD/charttitle.cpp \
     $$PWD/qpolarchart.cpp
 
-contains(QT_CONFIG, opengl): SOURCES += $$PWD/glwidget.cpp
+qtConfig(opengl): SOURCES += $$PWD/glwidget.cpp
 
-PRIVATE_HEADERS += \
+HEADERS += \
     $$PWD/chartdataset_p.h \
     $$PWD/chartitem_p.h \
     $$PWD/chartpresenter_p.h \
@@ -44,35 +41,31 @@ PRIVATE_HEADERS += \
     $$PWD/charthelpers_p.h \
     $$PWD/qchartglobal_p.h
 
-contains(QT_CONFIG, opengl): PRIVATE_HEADERS += $$PWD/glwidget_p.h
+qtConfig(opengl): HEADERS += $$PWD/glwidget_p.h
 
-PUBLIC_HEADERS += \
+HEADERS += \
     $$PWD/qchart.h \
     $$PWD/qchartglobal.h \
     $$PWD/qabstractseries.h \
     $$PWD/qchartview.h \
-    $$PWD/chartsnamespace.h \
     $$PWD/qpolarchart.h
 
 include($$PWD/animations/animations.pri)
-include($$PWD/areachart/areachart.pri)
-include($$PWD/axis/axis.pri)
-include($$PWD/domain/domain.pri)
-include($$PWD/barchart/barchart.pri)
-include($$PWD/legend/legend.pri)
-include($$PWD/linechart/linechart.pri)
-include($$PWD/piechart/piechart.pri)
-include($$PWD/scatterchart/scatter.pri)
-include($$PWD/splinechart/splinechart.pri)
 include($$PWD/themes/themes.pri)
 include($$PWD/xychart/xychart.pri)
 include($$PWD/layout/layout.pri)
-include($$PWD/boxplotchart/boxplotchart.pri)
-include($$PWD/candlestickchart/candlestickchart.pri)
+include($$PWD/axis/axis.pri)
+include($$PWD/domain/domain.pri)
+include($$PWD/legend/legend.pri)
 
-HEADERS += $$PUBLIC_HEADERS
-HEADERS += $$PRIVATE_HEADERS
-HEADERS += $$THEMES
+qtConfig(charts-area-chart): include($$PWD/areachart/areachart.pri)
+qtConfig(charts-bar-chart): include($$PWD/barchart/barchart.pri)
+qtConfig(charts-line-chart): include($$PWD/linechart/linechart.pri)
+qtConfig(charts-pie-chart): include($$PWD/piechart/piechart.pri)
+qtConfig(charts-scatter-chart): include($$PWD/scatterchart/scatter.pri)
+qtConfig(charts-spline-chart): include($$PWD/splinechart/splinechart.pri)
+qtConfig(charts-boxplot-chart): include($$PWD/boxplotchart/boxplotchart.pri)
+qtConfig(charts-candlestick-chart): include($$PWD/candlestickchart/candlestickchart.pri)
 
 OTHER_FILES += doc/qtcharts.qdocconf \
                doc/src/* \

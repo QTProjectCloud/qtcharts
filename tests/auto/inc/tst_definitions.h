@@ -54,7 +54,7 @@
             QPushButton b; \
             b.resize(120, 100); \
             b.show(); \
-            QTest::qWaitForWindowExposed(&b); \
+            QVERIFY(QTest::qWaitForWindowExposed(&b)); \
             QSignalSpy spy(&b, SIGNAL(clicked())); \
             QTest::mouseClick(&b, Qt::LeftButton, {}, b.rect().center()); \
             QApplication::processEvents(); \
@@ -93,12 +93,12 @@ static inline bool isPolarTest()
     return isPolar;
 }
 
-static inline QtCharts::QChart *newQChartOrQPolarChart()
+static inline QChart *newQChartOrQPolarChart()
 {
     if (isPolarTest())
-        return new QtCharts::QPolarChart();
+        return new QPolarChart();
     else
-        return new QtCharts::QChart();
+        return new QChart();
 }
 
 
