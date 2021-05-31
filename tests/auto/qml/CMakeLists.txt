@@ -4,7 +4,7 @@
 ## qml Test:
 #####################################################################
 
-qt_internal_add_test(qml
+qt_internal_add_test(charts_qml
     SOURCES
         ../inc/tst_definitions.h
         tst_qml.cpp
@@ -13,8 +13,6 @@ qt_internal_add_test(qml
     PUBLIC_LIBRARIES
         Qt::Charts
         Qt::Gui
-        Qt::OpenGL
-        Qt::OpenGLWidgets
         Qt::Qml
         Qt::Quick
         Qt::Widgets

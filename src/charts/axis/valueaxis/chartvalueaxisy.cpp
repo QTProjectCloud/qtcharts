@@ -68,30 +68,27 @@ QList<qreal> ChartValueAxisY::calculateLayout() const
         points.resize(tickCount);
 
         const QRectF &gridRect = gridGeometry();
-
         const qreal deltaY = gridRect.height() / (qreal(tickCount) - 1.0);
         for (int i = 0; i < tickCount; ++i)
             points[i] = qreal(i) * -deltaY + gridRect.bottom();
-
         return points;
     } else {
         const qreal interval = m_axis->tickInterval();
-        qreal value = m_axis->tickAnchor();
+        const qreal anchor = m_axis->tickAnchor();
         const qreal maxValue = max();
         const qreal minValue = min();
 
-        // Find the first major tick right after the min of range
-        if (value > minValue)
-            value = value - int((value - minValue) / interval) * interval;
-        else
-            value = value + qCeil((minValue - value) / interval) * interval;
+        // Find the first major tick right after the min of the range
+        const qreal ticksFromAnchor = (anchor - minValue) / interval;
+        const qreal firstMajorTick = anchor - std::floor(ticksFromAnchor) * interval;
 
         const QRectF &gridRect = gridGeometry();
         const qreal deltaY = gridRect.height() / (maxValue - minValue);
 
         QList<qreal> points;
         const qreal bottomPos = gridRect.bottom();
-        while (value <= maxValue || qFuzzyCompare(value, maxValue)) {
+        qreal value = firstMajorTick;
+        while (value <= maxValue) {
             points << (value - minValue) * -deltaY + bottomPos;
             value += interval;
         }

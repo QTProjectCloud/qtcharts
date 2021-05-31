@@ -382,7 +382,7 @@ void VerticalAxis::updateMinorTickGeometry()
 
         minorTickCount = logValueAxis->minorTickCount();
         if (minorTickCount < 0)
-            minorTickCount = qMax(int(qFloor(base) - 2.0), 0);
+            minorTickCount = qMax(qFloor(base) - 2, 0);
 
         // Two "virtual" ticks are required to make sure that all minor ticks
         // are displayed properly (even for the partially visible segments of
@@ -493,10 +493,10 @@ void VerticalAxis::updateMinorTickGeometry()
 
                 qreal minorGridLineItemY = 0.0;
                 if (axis()->isReverse()) {
-                    minorGridLineItemY = qFloor(gridGeometry().top() + gridGeometry().bottom()
-                                                - layout.at(i) + minorTickSpacing);
+                    minorGridLineItemY = std::floor(gridGeometry().top() + gridGeometry().bottom()
+                                                    - layout.at(i) + minorTickSpacing);
                 } else {
-                    minorGridLineItemY = qCeil(layout.at(i) - minorTickSpacing);
+                    minorGridLineItemY = std::ceil(layout.at(i) - minorTickSpacing);
                 }
 
                 qreal minorArrowLineItemX1;

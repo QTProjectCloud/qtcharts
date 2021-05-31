@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt Charts module of the Qt Toolkit.
@@ -48,18 +48,19 @@ XYChart::XYChart(QXYSeries *series, QGraphicsItem *item):
       m_animation(0),
       m_dirty(true)
 {
-    QObject::connect(series, SIGNAL(pointReplaced(int)), this, SLOT(handlePointReplaced(int)));
-    QObject::connect(series, SIGNAL(pointsReplaced()), this, SLOT(handlePointsReplaced()));
-    QObject::connect(series, SIGNAL(pointAdded(int)), this, SLOT(handlePointAdded(int)));
-    QObject::connect(series, SIGNAL(pointRemoved(int)), this, SLOT(handlePointRemoved(int)));
-    QObject::connect(series, SIGNAL(pointsRemoved(int, int)), this, SLOT(handlePointsRemoved(int, int)));
-    QObject::connect(this, SIGNAL(clicked(QPointF)), series, SIGNAL(clicked(QPointF)));
-    QObject::connect(this, SIGNAL(hovered(QPointF,bool)), series, SIGNAL(hovered(QPointF,bool)));
-    QObject::connect(this, SIGNAL(pressed(QPointF)), series, SIGNAL(pressed(QPointF)));
-    QObject::connect(this, SIGNAL(released(QPointF)), series, SIGNAL(released(QPointF)));
-    QObject::connect(this, SIGNAL(doubleClicked(QPointF)), series, SIGNAL(doubleClicked(QPointF)));
-    QObject::connect(series, &QAbstractSeries::useOpenGLChanged,
-                     this, &XYChart::handleDomainUpdated);
+    connect(series->d_func(), &QXYSeriesPrivate::seriesUpdated,
+            this, &XYChart::handleSeriesUpdated);
+    connect(series, &QXYSeries::pointReplaced, this, &XYChart::handlePointReplaced);
+    connect(series, &QXYSeries::pointsReplaced, this, &XYChart::handlePointsReplaced);
+    connect(series, &QXYSeries::pointAdded, this, &XYChart::handlePointAdded);
+    connect(series, &QXYSeries::pointRemoved, this, &XYChart::handlePointRemoved);
+    connect(series, &QXYSeries::pointsRemoved, this, &XYChart::handlePointsRemoved);
+    connect(this, &XYChart::clicked, series, &QXYSeries::clicked);
+    connect(this, &XYChart::hovered, series, &QXYSeries::hovered);
+    connect(this, &XYChart::pressed, series, &QXYSeries::pressed);
+    connect(this, &XYChart::released, series, &QXYSeries::released);
+    connect(this, &XYChart::doubleClicked, series, &QXYSeries::doubleClicked);
+    connect(series, &QAbstractSeries::useOpenGLChanged, this, &XYChart::handleDomainUpdated);
 }
 
 void XYChart::setGeometryPoints(const QList<QPointF> &points)
@@ -246,9 +247,42 @@ void XYChart::handleDomainUpdated()
     }
 }
 
+void XYChart::handleSeriesUpdated()
+{
+}
+
 bool XYChart::isEmpty()
 {
     return domain()->isEmpty() || m_series->points().isEmpty();
+}
+
+QPointF XYChart::matchForLightMarker(const QPointF &eventPos)
+{
+    if (m_series->lightMarker().isNull())
+        return QPointF(qQNaN(), qQNaN()); // 0,0 could actually be in points()
+
+    int markerWidth =  m_series->lightMarker().width();
+    int markerHeight =  m_series->lightMarker().height();
+
+    for (const QPointF &dp : m_series->points()) {
+        bool ok;
+        const QPointF gp = domain()->calculateGeometryPoint(dp, ok);
+        if (ok) {
+            // '+2' and '+4': There is an addRect for the (mouse-)shape
+            // in LineChartItem::updateGeometry()
+            // This has a margin of 1 to make sure a press in the icon will always be detected,
+            // but as there is a bunch of 'translations' and therefore inaccuracies,
+            // so it is necessary to increase that margin to 2
+            // (otherwise you can click next to an icon, get a click event but not match it)
+            QRectF r(gp.x() - (markerWidth / 2 + 2),
+                     gp.y() - (markerHeight / 2 + 2),
+                     markerWidth + 4, markerHeight + 4);
+
+            if (r.contains(eventPos))
+                return dp;
+        }
+    }
+    return QPointF(qQNaN(), qQNaN()); // 0,0 could actually be in points()
 }
 
 QT_END_NAMESPACE

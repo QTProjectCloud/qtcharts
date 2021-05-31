@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt Charts module of the Qt Toolkit.
@@ -43,13 +43,13 @@
 #include <private/chartitem_p.h>
 #include <private/xyanimation_p.h>
 #include <QtCharts/QValueAxis>
+#include <QtCharts/QXYSeries>
 #include <QtCharts/private/qchartglobal_p.h>
 #include <QtGui/QPen>
 
 QT_BEGIN_NAMESPACE
 
 class ChartPresenter;
-class QXYSeries;
 
 class Q_CHARTS_PRIVATE_EXPORT XYChart :  public ChartItem
 {
@@ -79,6 +79,8 @@ public Q_SLOTS:
     void handlePointsReplaced();
     void handleDomainUpdated() override;
 
+    virtual void handleSeriesUpdated();
+
 Q_SIGNALS:
     void clicked(const QPointF &point);
     void hovered(const QPointF &point, bool state);
@@ -92,14 +94,21 @@ protected:
     virtual void updateGlChart();
     virtual void refreshGlChart();
 
+    QPointF matchForLightMarker(const QPointF &eventPos);
+
 private:
     inline bool isEmpty();
 
 protected:
     QXYSeries *m_series;
     QList<QPointF> m_points;
+    QList<int> m_selectedPoints;
+    QColor m_selectedColor;
     XYAnimation *m_animation;
     bool m_dirty;
+
+    QHash<int, QHash<QXYSeries::PointConfiguration, QVariant>> m_pointsConfiguration;
+    bool m_pointsConfigurationDirty;
 
     friend class AreaChartItem;
 };

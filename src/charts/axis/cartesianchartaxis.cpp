@@ -132,15 +132,16 @@ void CartesianChartAxis::updateMinorTickItems()
             expectedCount = qMax(expectedCount, 0);
         } else {
             const qreal interval = valueAxis->tickInterval();
-            qreal firstMajorTick = valueAxis->tickAnchor();
+            const qreal anchor = valueAxis->tickAnchor();
             const qreal max = valueAxis->max();
             const qreal min = valueAxis->min();
             const int _minorTickCount = valueAxis->minorTickCount();
 
-            if (min < firstMajorTick)
-                firstMajorTick = firstMajorTick - qCeil((firstMajorTick - min) / interval) * interval;
-            else
-                firstMajorTick = firstMajorTick + int((min - firstMajorTick) / interval) * interval;
+            // Find the closest major tick <= the min of the range, even if it's not drawn!
+            // This is where we'll start counting minor ticks from, because minor ticks
+            // might need to be drawn even before the first major tick.
+            const qreal ticksFromAnchor = (anchor - min) / interval;
+            const qreal firstMajorTick = anchor - std::ceil(ticksFromAnchor) * interval;
 
             const qreal deltaMinor = interval / qreal(_minorTickCount + 1);
             qreal minorTick = firstMajorTick + deltaMinor;
@@ -155,7 +156,7 @@ void CartesianChartAxis::updateMinorTickItems()
 
             // Calculate the points on axis value space. Conversion to graphical points
             // will be done on axis specific geometry update function
-            while (minorTick <= max || qFuzzyCompare(minorTick, max)) {
+            while (minorTick <= max) {
                 if (minorCounter < _minorTickCount) {
                     expectedCount++;
                     minorCounter++;
@@ -173,7 +174,7 @@ void CartesianChartAxis::updateMinorTickItems()
 
         int minorTickCount = logValueAxis->minorTickCount();
         if (minorTickCount < 0)
-            minorTickCount = qMax(int(qFloor(logValueAxis->base()) - 2.0), 0);
+            minorTickCount = qMax(qFloor(logValueAxis->base()) - 2, 0);
 
         expectedCount = minorTickCount * (logValueAxis->tickCount() + 1);
         expectedCount = qMax(expectedCount, logValueAxis->minorTickCount());
@@ -374,16 +375,16 @@ void CartesianChartAxis::updateLabelsValues(QValueAxis *axis)
             static_cast<ValueAxisLabel *>(labelItems().at(i))->setValue(value);
         }
     } else {
-        qreal value = axis->tickAnchor();
-        if (value > min())
-            value = value - int((value - min()) / axis->tickInterval()) * axis->tickInterval();
-        else
-            value = value + qCeil((min() - value) / axis->tickInterval()) * axis->tickInterval();
+        const qreal anchor = axis->tickAnchor();
+        const qreal interval = axis->tickInterval();
+        const qreal ticksFromAnchor = (anchor - min()) / interval;
+        const qreal firstMajorTick = anchor - std::floor(ticksFromAnchor) * interval;
 
         int i = axis->isReverse() ? labelItems().count()-1 : 0;
-        while (value <= max() || qFuzzyCompare(value, max())) {
+        qreal value = firstMajorTick;
+        while (value <= max()) {
             static_cast<ValueAxisLabel *>(labelItems().at(i))->setValue(value);
-            value += axis->tickInterval();
+            value += interval;
             i += axis->isReverse() ? -1 : 1;
         }
     }

@@ -63,7 +63,11 @@ public:
         MarkerShapeDefault,
         MarkerShapeRectangle,
         MarkerShapeCircle,
-        MarkerShapeFromSeries
+        MarkerShapeFromSeries,
+        MarkerShapeRotatedRectangle,
+        MarkerShapeTriangle,
+        MarkerShapeStar,
+        MarkerShapePentagon
     };
     Q_ENUMS(MarkerShape)
 
@@ -123,6 +127,7 @@ Q_SIGNALS:
     void reverseMarkersChanged(bool reverseMarkers);
     void showToolTipsChanged(bool showToolTips);
     void markerShapeChanged(MarkerShape shape);
+    Q_REVISION(6, 2) void attachedToChartChanged(bool attachedToChart);
 
 private:
     QScopedPointer<QLegendPrivate> d_ptr;

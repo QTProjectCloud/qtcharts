@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2021 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the Qt Charts module of the Qt Toolkit.
@@ -64,15 +64,28 @@ public:
     QAbstractAxis::AxisType defaultAxisType(Qt::Orientation orientation) const override;
     QAbstractAxis* createDefaultAxis(Qt::Orientation orientation) const override;
 
+    void drawPointLabels(QPainter *painter, const QList<QPointF> &allPoints, const int offset = 0);
     void drawSeriesPointLabels(QPainter *painter, const QList<QPointF> &points,
-                               const int offset = 0);
+                               const int offset = 0, const QHash<int, int> &offsets = {},
+                               const QList<int> &indexesToSkip = {});
+
+    void drawBestFitLine(QPainter *painter, const QRectF &clipRect);
+    QPair<qreal, qreal> bestFitLineEquation(bool &ok) const;
+
+    void setPointSelected(int index, bool selected, bool &callSignal);
+    bool isPointSelected(int index);
+
+    bool isMarkerSizeDefault();
+    void setMarkerSize(qreal markerSize);
 
 Q_SIGNALS:
-    void updated();
+    void seriesUpdated();
 
 protected:
     QList<QPointF> m_points;
+    QSet<int> m_selectedPoints;
     QPen m_pen;
+    QColor m_selectedColor;
     QBrush m_brush;
     bool m_pointsVisible;
     QString m_pointLabelsFormat;
@@ -80,6 +93,13 @@ protected:
     QFont m_pointLabelsFont;
     QColor m_pointLabelsColor;
     bool m_pointLabelsClipping;
+    QImage m_lightMarker;
+    QPen m_bestFitLinePen;
+    bool m_bestFitLineVisible;
+    qreal m_markerSize;
+    bool m_markerSizeDefault = true;
+
+    QHash<int, QHash<QXYSeries::PointConfiguration, QVariant>> m_pointsConfiguration;
 
 private:
     Q_DECLARE_PUBLIC(QXYSeries)

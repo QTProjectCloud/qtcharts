@@ -184,10 +184,20 @@ QT_BEGIN_NAMESPACE
            Marker size is determined by font size.
     \value MarkerShapeCircle Circular markers are used.
            Marker size is determined by font size.
+    \value MarkerShapeRotatedRectangle Rotated rectangle shaped markers are used.
+           Marker size is determined by font size.
+    \value MarkerShapeTriangle Triangular markers are used.
+           Marker size is determined by font size.
+    \value MarkerShapeStar Star shaped markers are used.
+           Marker size is determined by font size.
+    \value MarkerShapePentagon Pentagon shaped markers are used.
+           Marker size is determined by font size.
     \value MarkerShapeFromSeries The marker shape is determined by the series.
            In case of a scatter series, the legend marker looks like a scatter dot and is the same
-           size as the dot. In case of a line or spline series, the legend marker looks like a small
-           segment of the line. For other series types, rectangular markers are shown.
+           size as the dot. In case of a line or spline series, the legend marker looks like a
+           small segment of the line. For other series types, rectangular markers are shown.
+           If a \c lightMarker is specified for a series, the \c lightMarker will be shown and
+           its size will be determined by the series marker size.
 
     \sa markerShape
 */
@@ -201,6 +211,10 @@ QT_BEGIN_NAMESPACE
 
     \value Legend.MarkerShapeRectangle Legend markers are rectangular
     \value Legend.MarkerShapeCircle Legend markers are circular
+    \value MarkerShapeRotatedRectangle Legend markers are rotated rectangle shaped.
+    \value MarkerShapeTriangle Legend markers are triangular.
+    \value MarkerShapeStar Legend markers are star shaped.
+    \value MarkerShapePentagon Legend markers are pentagon shaped.
     \value Legend.MarkerShapeFromSeries Legend marker shape is determined by the series
 
     \sa QLegend::MarkerShape
@@ -218,6 +232,12 @@ QT_BEGIN_NAMESPACE
     \qmlproperty bool Legend::showToolTips
     Whether tooltips are shown when the text is truncated. This property is \c false by default.
     This property currently has no effect as there is no support for tooltips in QML.
+*/
+
+/*!
+    \fn void QLegend::attachedToChartChanged(bool)
+    This signal is emitted when the legend is attached to or detached from the legend.
+    \since 6.2
 */
 
 /*!
@@ -451,11 +471,13 @@ Qt::Alignment QLegend::alignment() const
  */
 void QLegend::detachFromChart()
 {
+    bool changed = d_ptr->m_attachedToChart == true;
     d_ptr->m_attachedToChart = false;
-//    layout()->invalidate();
     d_ptr->m_chart->layout()->invalidate();
     setParent(0);
 
+    if (changed)
+        emit attachedToChartChanged(false);
 }
 
 /*!
@@ -463,10 +485,13 @@ void QLegend::detachFromChart()
  */
 void QLegend::attachToChart()
 {
+    bool changed = d_ptr->m_attachedToChart == false;
     d_ptr->m_attachedToChart = true;
-//    layout()->invalidate();
     d_ptr->m_chart->layout()->invalidate();
     setParent(d_ptr->m_chart);
+
+    if (changed)
+        emit attachedToChartChanged(true);
 }
 
 /*!
